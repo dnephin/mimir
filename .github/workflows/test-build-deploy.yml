@@ -155,11 +155,29 @@ jobs:
       - run: go install gotest.tools/gotestsum@v1.9.0
       - name: Run Tests
         run: |
-          echo "Running unit tests (group ${{ matrix.test_group_id }} of ${{ matrix.test_group_total }}) with Go version: $(go version)"
+          echo "Running unit tests (group ${{ matrix.id }} of 4) with Go version: $(go version)"
           echo '${{ toJson(matrix) }}'
           gotestsum \
               --jsonfile=/home/runner/reports/test-run-${{github.run_number}}-${{matrix.id}}.log \
               -- -tags=netgo -timeout 30m -race -count 1 ${{matrix.packages}}
+
+  test-collect-reports:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: /home/runner/reports
+          key: go-test-reports-${{ github.run_number }}
+          restore-keys: go-test-reports-
+      - uses: actions/download-artifact@v3
+        with:
+          name: test-reports
+          path: /home/runner/reports
+      - run: |
+          ls -lhR /home/runner/reports
+          find /home/runner/reports/ -mindepth 1 -mtime +3 -delete
+          ls -lhR /home/runner/reports
 
   test-docs:
     runs-on: ubuntu-latest

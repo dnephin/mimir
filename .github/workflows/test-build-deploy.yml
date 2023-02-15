@@ -163,6 +163,13 @@ jobs:
               --jsonfile=/home/runner/reports/test-run-${{github.run_number}}-${{matrix.id}}.log \
               -- -tags=netgo -timeout 30m -race -count 1 ${{matrix.packages}}
 
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: /home/runner/reports/*.log
+          retention-days: 5
+
   test-collect-reports:
     needs: test
     runs-on: ubuntu-latest

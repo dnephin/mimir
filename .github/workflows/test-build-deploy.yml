@@ -9,7 +9,7 @@ on:
       - mimir-[0-9]+.[0-9]+.[0-9]+**
   pull_request:
   schedule:
-    - cron: '45 * 16,17,18 * *'
+    - cron: '45 15 * * *'
 
 concurrency:
   # Cancel any running workflow for the same branch when new commits are pushed.
